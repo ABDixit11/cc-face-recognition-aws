@@ -11,6 +11,8 @@ logger.setLevel(logging.INFO)
 input_bucket = "cc-ss-input-2"
 output_bucket = "cc-ss-output-2" #todo : create this bucket
 s3 = boto3.client('s3')
+dynamo = boto3.client('dynamodb')
+table=dynamo.Table('cc-project-2-student-data') #todo : edit table name
 file_path = '/home/app/encoding'
 # file_path = 'encoding' #for local testing
 
@@ -24,9 +26,8 @@ def open_encoding(filename):
 
 
 def get_info_from_dynamo(name):
-    # todo : load data to ddb table with hash/pk = name
-    # get data from ddb and return it here as text/string
-    pass
+    results = table.get_item(Key={"name" : name})
+    return results["Item"] #{'year': 'freshmen', 'major': 'lawyer', 'student-id': Decimal('1'), 'id': Decimal('1'), 'name': 'mr_bean'}
 
 
 def upload_file_to_s3(video_file_name, name_of_person_detected, information_from_dynamo):
